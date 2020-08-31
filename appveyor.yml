@@ -18,10 +18,10 @@ install:
 
         # Download latest Invoke-Build file
         # Does not apply to MyBuildTools
-        # [System.Net.WebClient]::new().DownloadFile(
-        #     "https://raw.githubusercontent.com/Tadas/MyBuildTools/$((Invoke-RestMethod "https://api.github.com/repos/Tadas/MyBuildTools/releases/latest").tag_name)/.build.ps1",
-        #     "$pwd\.build.ps1"
-        # )
+        [System.Net.WebClient]::new().DownloadFile(
+            "https://raw.githubusercontent.com/Tadas/MyBuildTools/$((Invoke-RestMethod "https://api.github.com/repos/Tadas/MyBuildTools/releases/latest").tag_name)/.build.ps1",
+            "$pwd\.build.ps1"
+        )
 
 build: false
 
