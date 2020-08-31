@@ -29,7 +29,7 @@ Describe "PSGeminiAPI" {
 					request   = '/v1/mytrades'
 				}
 				$ExpectedPayload_b64 = [Convert]::ToBase64String(
-					[System.Text.Encoding]::UTF8.GetBytes( ($ExpectedPayload | ConvertTo-Json) )
+					[System.Text.Encoding]::UTF8.GetBytes( ($ExpectedPayload | ConvertTo-Json -Compress) )
 				)
 
 				Mock Get-Date { return [datetime]::FromFileTime($ExpectedPayload.nonce) }
@@ -40,7 +40,7 @@ Describe "PSGeminiAPI" {
 				$ApiCallParams.Headers['Content-Type']       | Should -Be 'text/plain'
 				$ApiCallParams.Headers['X-GEMINI-APIKEY']    | Should -Be $API_Params.Credentials.UserName
 				$ApiCallParams.Headers['X-GEMINI-PAYLOAD']   | Should -Be $ExpectedPayload_b64
-				$ApiCallParams.Headers['X-GEMINI-SIGNATURE'] | Should -Be '33692146faa15015c069f8c249dc9ddde86517f346ead69fc56f54e016c6d8c3537d5f80f01d401b4d2fe6d61d8493af'
+				$ApiCallParams.Headers['X-GEMINI-SIGNATURE'] | Should -Be '15aeab8c2e023d35c1620ce82dc2ed9f495191c297c5ee8ee35ad10c405a2228cf613b000c65c1188c614045f0c97de4'
 			}
 
 			It "Request <Request> produces url <Expected>" -TestCases @(

@@ -34,7 +34,7 @@
 		$PayloadBody['nonce'] = (Get-Date).ToFileTime()
 		$PayloadBody['request'] = $Request
 
-		Write-Verbose "Payload body: $($PayloadBody | ConvertTo-Json)"
+		Write-Verbose "Payload body: $($PayloadBody | ConvertTo-Json -Compress)"
 
 		$RestMethodParams = [ordered]@{
 			Uri = $API_Url.TrimEnd('/') + '/' + $Request.TrimStart('/')
@@ -43,14 +43,15 @@
 				'Cache-Control'      = 'no-cache'
 				'Content-Type'       = 'text/plain'
 				'X-GEMINI-APIKEY'    = $Credentials.UserName
-				'X-GEMINI-PAYLOAD'   = [Convert]::ToBase64String( [System.Text.Encoding]::UTF8.GetBytes( ($PayloadBody | ConvertTo-Json) ) )
+				'X-GEMINI-PAYLOAD'   = [Convert]::ToBase64String( [System.Text.Encoding]::UTF8.GetBytes( ($PayloadBody | ConvertTo-Json -Compress) ) )
 				'X-GEMINI-SIGNATURE' = ''
 			}
 		}
 
 		$RestMethodParams.Headers['X-GEMINI-SIGNATURE'] = [System.BitConverter]::ToString(
 			[System.Security.Cryptography.HMACSHA384]::new(
-				[Text.Encoding]::ASCII.GetBytes( (ConvertFrom-SecureString $Credentials.Password -AsPlainText) )
+				# [Text.Encoding]::ASCII.GetBytes( (ConvertFrom-SecureString $Credentials.Password -AsPlainText) ) # Since v7
+				[Text.Encoding]::ASCII.GetBytes( $Credentials.GetNetworkCredential().Password )
 			).ComputeHash(
 				[Text.Encoding]::ASCII.GetBytes( $RestMethodParams.Headers['X-GEMINI-PAYLOAD'] )
 			)
